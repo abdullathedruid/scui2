@@ -249,12 +249,13 @@ class App extends Component {
           console.log('Finished loading: ',metaevidence);
           if(i>=(numEvents-1)) {
             console.log('loaded all data')
-
             this.setState({loading: false})
+
           }
         })
       })
     }
+    this.setState({loading: false})
   }
 
 
