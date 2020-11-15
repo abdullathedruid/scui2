@@ -31,7 +31,8 @@ class BetCard extends Component {
     super()
     this.state = {
       openBet: true,
-      currentBet: 0
+      currentBet: 0,
+      timestamp: 0
     }
   }
 
@@ -71,12 +72,14 @@ class BetCard extends Component {
   }
 
   handleOpen = (e) => {
-    this.props.handleOpen(e,this.props.id,1+parseInt(e.target.id))
+    if(((Date.now())/1000) < this.props.state.eventData[this.props.id].endTime) {
+      this.props.handleOpen(e,this.props.id,1+parseInt(e.target.id))
+    }
   }
 
   render() {
     var eventData = this.props.state.eventData[this.props.id]
-    var timestamp = (Date.now())/1000
+    //this.setState({timestamp: (Date.now())/1000})
     return(
       <div>
       <Typography>{eventData.description}</Typography>
