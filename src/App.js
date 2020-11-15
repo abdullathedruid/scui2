@@ -110,6 +110,21 @@ class App extends Component {
 
   }
 
+  handleSetOutcome = (e) => {
+    var X=0;
+    var Y=0;
+    console.log(`Attempting to set outcome [X] for event [Y]`)
+    try{
+      this.state.event[Y].methods.setOutcome(X).send({from: this.state.account})
+      .once('receipt', ((receipt) => {
+        console.log('Outcome has been set')
+        this.setState({openSetOutcome: false})
+      }))
+    } catch (err) {
+      console.log('Error', err)
+    }
+  }
+
   handlePlaceBet = (e) => {
     console.log(`Attempting to buy ${this.state.quotedAmount} shares on option [${this.state.openBetOption}] on event: ${this.state.eventData[this.state.openBetBet].title} at address ${this.state.event[this.state.openBetBet]._address}`)
     try{
