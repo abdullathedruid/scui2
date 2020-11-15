@@ -148,7 +148,7 @@ class CreateMarket extends Component {
           width: '50%',
           padding: 10
           }}>
-          <Button type="submit" size="large" color="primary" variant="contained" component="span" onClick={this.handleSubmit}>Submit</Button>
+          <Button colour="primary" type="submit" size="large" style = {{backgroundColor: "#ED1C24", color : "#FFFFFF"}}  variant="contained" component="span" onClick={this.handleSubmit}> Submit</Button>
           </div>
         </form>
         </Container>
