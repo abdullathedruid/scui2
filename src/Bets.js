@@ -129,6 +129,7 @@ class Bets extends Component {
   }
 
   render() {
+    console.log(this.props.state.quotedPrice)
     return(
       <Container>
       <Dialog scroll='body' onClose={this.handleClose} open={this.props.open}>

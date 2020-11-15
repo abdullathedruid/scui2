@@ -72,7 +72,7 @@ class App extends Component {
     if(e.target.value == 0) {
       this.setState({quotedPrice: 0})
     }
-    this.state.event[this.state.openBetBet].methods.price(this.state.openBetOption,new this.state.web3.utils.BN(e.target.value*(2**64))).call().then((res) => {
+    this.state.event[this.state.openBetBet].methods.price(this.state.openBetOption,new this.state.web3.utils.BN(e.target.value).shln(64)).call().then((res) => {
       this.setState({quotedPrice: res/1000000})
     })
     this.setState({quotedAmount: e.target.value})
@@ -127,7 +127,7 @@ class App extends Component {
   handlePlaceBet = (e) => {
     console.log(`Attempting to buy ${this.state.quotedAmount} shares on option [${this.state.openBetOption}] on event: ${this.state.eventData[this.state.openBetBet].title} at address ${this.state.event[this.state.openBetBet]._address}`)
     try{
-      this.state.event[this.state.openBetBet].methods.buyshares(this.state.openBetOption,new this.state.web3.utils.BN(this.state.quotedAmount*(2**64))).send({from: this.state.account})
+      this.state.event[this.state.openBetBet].methods.buyshares(this.state.openBetOption,new this.state.web3.utils.BN(this.state.quotedAmount).shln(64)).send({from: this.state.account})
       .once('receipt', ((receipt) => {
         console.log('Placed Bet!')
         this.setState({openBet: false})
