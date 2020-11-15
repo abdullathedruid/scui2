@@ -149,6 +149,17 @@ class App extends Component {
     }
   }
 
+  handleDisputeOutcome = (e,b,o) => {
+    try{
+      this.state.arbitrator.methods.rule(b,o).send({from: this.state.account})
+      .once('receipt', ((receipt) => {
+        console.log('KLEROS has made the judgement')
+      }))
+    } catch (err) {
+      console.log('Error', err)
+    }
+  }
+
   addEventData (address,title,description,question,options,endTime,resultTime, outcome, price, balances, state) {
     var obj = {
       address: address,
@@ -183,7 +194,7 @@ class App extends Component {
       status: data[3],
       eventData: null
     }
-    this.setState({disputeData: [...this.state.disputeData, obj]})
+    this.setState({disputeData: [...this.state.disputeData, Object.keys(obj).map((key) => obj[key])]})
   }
 
   async loadData() {
@@ -191,7 +202,7 @@ class App extends Component {
     const accounts = await web3.eth.getAccounts()
     this.setState({account: accounts[0]})
 
-    const factory = new web3.eth.Contract(FactoryContract.abi, '0x32B54CEF0E66d30D5B099B3220a7265319e9442F')
+    const factory = new web3.eth.Contract(FactoryContract.abi, '0xd0eE08e54E80DD957BC952974d18030Fd8C8e5f8')
     this.setState({factory})
     const numEvents = await factory.methods.getNumberOfMarkets().call()
     this.setState({numberOfEvents: numEvents})
@@ -201,7 +212,10 @@ class App extends Component {
     const numArbs = await arbitrator.methods.getNumberOfDisputes().call()
     for(var k=0;k<numArbs;k++) {
       var arb_data = await arbitrator.methods.getDisputeData(k).call()
-      this.addDisputeData(arb_data)
+      .then((response) => {
+        this.addDisputeData(response)
+      })
+
     }
 
     for(var i=0;i<numEvents;i++) {
@@ -235,6 +249,7 @@ class App extends Component {
           console.log('Finished loading: ',metaevidence);
           if(i>=(numEvents-1)) {
             console.log('loaded all data')
+
             this.setState({loading: false})
           }
         })
@@ -276,7 +291,7 @@ class App extends Component {
         <Bets handleDispute={this.handleDispute} handleSetOutcome = {this.handleSetOutcome} handleOpenSetOutcome={this.handleOpenSetOutcome} handleCloseSetOutcome={this.handleCloseSetOutcome} handlePlaceBet={this.handlePlaceBet} handleChangePurchaseSize={this.handleChangePurchaseSize} state={this.state} openSetOutcome={this.state.openSetOutcome} open={this.state.openBet} handleClose={this.handleCloseBet} handleOpen={this.handleOpenBet}/>
       </Grid>
       <Grid item xs={4}>
-        <Arbitrator state={this.state}/>
+        <Arbitrator handleDisputeOutcome={this.handleDisputeOutcome} state={this.state}/>
       </Grid>
     </Grid>
     </main>

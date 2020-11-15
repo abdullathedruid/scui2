@@ -14,11 +14,15 @@ class DisputeCard extends Component {
     super()
   }
 
+  handleDisputeOutcome = (e) => {
+    this.props.handleDisputeOutcome(e,this.props.id,e.target.id) //dispute ID then outcome
+  }
+
   render() {
     var disputeData = this.props.state.disputeData[this.props.id]
     var eventData = []
     this.props.state.eventData.map((ev,id) => {
-      if(ev.address == disputeData.arbitrated) {
+      if(ev.address == disputeData[0]) {
         eventData = ev
       } else {
         eventData = []
@@ -28,22 +32,22 @@ class DisputeCard extends Component {
       <div>
       <Typography>{eventData.title}</Typography>
       <Typography>{eventData.description}</Typography>
-      <Typography> User claimed the outcome is [{eventData.outcome}] whilst this has been disputed</Typography>
+      <Typography> User claimed the outcome is [{eventData.options[eventData.outcome]}] whilst this has been disputed</Typography>
       <Typography>{eventData.question}</Typography>
       <List>
       {eventData.options.map((description,key) => {
         return(
-        <ListItem button>{description}</ListItem>
+        <ListItem button onClick={this.handleDisputeOutcome} id={(key+1)}>{description}</ListItem>
       )
       })}
-      <ListItem button>Refuse to Arbitrate</ListItem>
+      <ListItem button onClick={this.handleDisputeOutcome} id={0}>Refuse to Arbitrate</ListItem>
       </List>
       </div>
     )
   }
 }
 
-const disputes =[]
+const disputes = []
 
 class Arbitrator extends Component {
   constructor(props) {
@@ -57,10 +61,10 @@ class Arbitrator extends Component {
       <CardMedia style={{ height: "200px" }} image="/court.png" />
       <div>
       {
-        disputes.map((dispute,key) => {
+        this.props.state.disputeData.map((dispute,key) => {
           return(
             <Accordion>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}> {dispute} </AccordionSummary>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}> Dispute {key} </AccordionSummary>
               <AccordionDetails> <DisputeCard id={key} state={this.props.state}/> </AccordionDetails>
             </Accordion>
           )
