@@ -202,11 +202,11 @@ class App extends Component {
     const accounts = await web3.eth.getAccounts()
     this.setState({account: accounts[0]})
 
-    const factory = new web3.eth.Contract(FactoryContract.abi, '0xd0eE08e54E80DD957BC952974d18030Fd8C8e5f8')
+    const factory = new web3.eth.Contract(FactoryContract.abi, '0x447D1d526E7eb3174208C266956dC339E254D1DD')
     this.setState({factory})
     const numEvents = await factory.methods.getNumberOfMarkets().call()
     this.setState({numberOfEvents: numEvents})
-    const arbitrator = new web3.eth.Contract(ArbitratorContract.abi,'0xd04293b15fE1031d8Bea6C48a807ACa36098bF8B')
+    const arbitrator = new web3.eth.Contract(ArbitratorContract.abi,'0x4aedBba59488F28ec25E83c2c716b55AcAe37d4C')
     this.setState({arbitrator})
 
     const numArbs = await arbitrator.methods.getNumberOfDisputes().call()
@@ -249,8 +249,8 @@ class App extends Component {
           console.log('Finished loading: ',metaevidence);
           if(i>=(numEvents-1)) {
             console.log('loaded all data')
-
             this.setState({loading: false})
+
           }
         })
       })

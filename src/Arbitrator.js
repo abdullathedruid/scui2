@@ -62,12 +62,21 @@ class Arbitrator extends Component {
       <div>
       {
         this.props.state.disputeData.map((dispute,key) => {
+          if(this.props.state.disputeData[3]<2) {
           return(
             <Accordion>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}> Dispute {key} </AccordionSummary>
-              <AccordionDetails> <DisputeCard id={key} state={this.props.state}/> </AccordionDetails>
+              <AccordionDetails> <DisputeCard id={key} state={this.props.state} handleDisputeOutcome={this.props.handleDisputeOutcome} /> </AccordionDetails>
             </Accordion>
-          )
+          )}
+          else {
+            return(
+              <Accordion>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}> Dispute {key} </AccordionSummary>
+                <AccordionDetails> Dispute settled! </AccordionDetails>
+              </Accordion>
+            )
+          }
         })
       }
       </div>
