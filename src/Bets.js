@@ -124,6 +124,10 @@ class Bets extends Component {
     this.props.handleSetOutcome(e,parseInt(e.target.id)+1)
   }
 
+  handleSubmit = (e) => {
+    this.props.handlePlaceBet()
+  }
+
   render() {
     return(
       <Container>
