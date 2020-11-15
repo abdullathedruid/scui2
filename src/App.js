@@ -229,6 +229,7 @@ class App extends Component {
             </AppBar>
       </header>
     <main>
+    <br/>
     <Grid container spacing = {3}>
 
       <Grid item xs={4}>

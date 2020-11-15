@@ -116,7 +116,7 @@ class Bets extends Component {
     return(
       <Container>
       <Dialog scroll='body' onClose={this.handleClose} open={this.props.open}>
-      <DialogTitle> Place Bet </DialogTitle>
+      <img style={{ width: "100%"}} src="place_bets.png" alt= "place bets"/>
         <Typography>{this.props.state.eventData[this.props.state.openBetBet].title}</Typography>
         <Typography>You have chosen: {this.props.state.eventData[this.props.state.openBetBet].options[this.props.state.openBetOption-1]}</Typography>
         <form>
@@ -127,7 +127,7 @@ class Bets extends Component {
           width: '50%',
           padding: 10
           }}>
-          <Button color="primary" variant="contained" onClick={this.props.handlePlaceBet}> Submit </Button>
+          <Button center="true" align = "center" colour="primary" type="submit" size="large" style = {{backgroundColor: "#ED1C24", color : "#FFFFFF"}}  variant="contained" component="span" onClick={this.handleSubmit}> Submit</Button>
           </div>
         </form>
 
