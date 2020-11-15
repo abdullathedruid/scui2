@@ -202,11 +202,11 @@ class App extends Component {
     const accounts = await web3.eth.getAccounts()
     this.setState({account: accounts[0]})
 
-    const factory = new web3.eth.Contract(FactoryContract.abi, '0xd0eE08e54E80DD957BC952974d18030Fd8C8e5f8')
+    const factory = new web3.eth.Contract(FactoryContract.abi, '0xCC484690bfeA257DD50f7a6865D0793d16Ac3E2A')
     this.setState({factory})
     const numEvents = await factory.methods.getNumberOfMarkets().call()
     this.setState({numberOfEvents: numEvents})
-    const arbitrator = new web3.eth.Contract(ArbitratorContract.abi,'0xd04293b15fE1031d8Bea6C48a807ACa36098bF8B')
+    const arbitrator = new web3.eth.Contract(ArbitratorContract.abi,'0xaededC9A349B19508cdAeD4C6F8CF244413260E7')
     this.setState({arbitrator})
 
     const numArbs = await arbitrator.methods.getNumberOfDisputes().call()
