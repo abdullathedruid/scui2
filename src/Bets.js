@@ -137,7 +137,7 @@ class Bets extends Component {
 
       </Dialog>
       <Dialog open={this.props.openSetOutcome} onClose={this.props.handleCloseSetOutcome}>
-        Set Outcome here
+      <img style={{ width: "100%"}} src="set_outcome.png" alt= "set outcome"/>
       </Dialog>
       <img style={{ width: "100%"}} src="active_markets.png" />
       <CardMedia style={{ height: "200px" }} image="/market2.jpg" />
