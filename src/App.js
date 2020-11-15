@@ -39,7 +39,8 @@ class App extends Component {
       openBet: false,
       openBetBet: 0,
       openBetOption: 1,
-      quotedPrice: 0
+      quotedPrice: 0,
+      quotedAmount: 0
     }
     this.addEventData = this.addEventData.bind(this)
   }
@@ -56,9 +57,13 @@ class App extends Component {
   }
 
   handleChangePurchaseSize = (e,bet) => {
+    if(e.target.value == 0) {
+      this.setState({quotedPrice: 0})
+    }
     this.state.event[this.state.openBetBet].methods.price(this.state.openBetOption,new BigNumber(e.target.value*(2**64))).call().then((res) => {
       this.setState({quotedPrice: res/1000000})
     })
+    this.setState({quotedAmount: e.target.value})
   }
 
   async componentDidMount() {
@@ -92,6 +97,19 @@ class App extends Component {
       }))
     })
 
+  }
+
+  handlePlaceBet = (e) => {
+    console.log(`Attempting to buy ${this.state.quotedAmount} shares on option [${this.state.openBetOption}] on event: ${this.state.eventData[this.state.openBetBet].title} at address ${this.state.event[this.state.openBetBet]._address}`)
+    try{
+      this.state.event[this.state.openBetBet].methods.buyshares(this.state.openBetOption,new BigNumber(this.state.quotedAmount*(2**64))).send({from: this.state.account})
+      .once('receipt', ((receipt) => {
+        console.log('Placed Bet!')
+        this.setState({openBet: false})
+      }))
+    } catch (err) {
+      console.log('Error', err)
+    }
   }
 
   addEventData (address,title,description,question,options,endTime,resultTime, outcome, price, balances, state) {
@@ -153,7 +171,7 @@ class App extends Component {
       var balances = []
       for (var j=0; j<numOptions; j++) {
         price[j] = (await ev.methods.price(j+1,new BigNumber(18446744073709551616)).call()/1000000).toFixed(2)
-        balances[j] = (await ev.methods.getBalanceOf(j,this.state.account).call())/(2^64)
+        balances[j] = (await ev.methods.getBalanceOf(j+1,this.state.account).call())/(2**64)
       }
 
       var outcome = await ev.methods.getOutcome().call()
@@ -218,7 +236,7 @@ class App extends Component {
         <CreateMarket createMarket={this.handleCreateMarket} state={this.state}/>
       </Grid>
       <Grid item xs={4}>
-        <Bets handleChangePurchaseSize={this.handleChangePurchaseSize} state={this.state} open={this.state.openBet} handleClose={this.handleCloseBet} handleOpen={this.handleOpenBet}/>
+        <Bets handlePlaceBet={this.handlePlaceBet} handleChangePurchaseSize={this.handleChangePurchaseSize} state={this.state} open={this.state.openBet} handleClose={this.handleCloseBet} handleOpen={this.handleOpenBet}/>
       </Grid>
       <Grid item xs={4}>
         <Arbitrator state={this.state}/>
