@@ -41,7 +41,8 @@ class App extends Component {
       openBetOption: 1,
       quotedPrice: 0,
       quotedAmount: 0,
-      openSetOutcome: false
+      openSetOutcome: false,
+      openSetOutcomeBet: 0
     }
     this.addEventData = this.addEventData.bind(this)
   }
@@ -62,9 +63,9 @@ class App extends Component {
     this.setState({openSetOutcome: false})
   }
 
-  handleOpenSetOutcome = (e) => {
+  handleOpenSetOutcome = (e,b) => {
     this.setState({openSetOutcome: true})
-    console.log(this.state.openSetOutcome)
+    this.setState({openSetOutcomeBet: b})
   }
 
   handleChangePurchaseSize = (e,bet) => {
@@ -110,12 +111,10 @@ class App extends Component {
 
   }
 
-  handleSetOutcome = (e) => {
-    var X=0;
-    var Y=0;
-    console.log(`Attempting to set outcome [X] for event [Y]`)
+  handleSetOutcome = (e,x) => {
+    console.log(`Attempting to set outcome [${x}] for event [${this.state.openSetOutcomeBet}]`)
     try{
-      this.state.event[Y].methods.setOutcome(X).send({from: this.state.account})
+      this.state.event[this.state.openSetOutcomeBet].methods.setOutcome(x).send({from: this.state.account})
       .once('receipt', ((receipt) => {
         console.log('Outcome has been set')
         this.setState({openSetOutcome: false})
@@ -131,6 +130,18 @@ class App extends Component {
       this.state.event[this.state.openBetBet].methods.buyshares(this.state.openBetOption,new BigNumber(this.state.quotedAmount*(2**64))).send({from: this.state.account})
       .once('receipt', ((receipt) => {
         console.log('Placed Bet!')
+        this.setState({openBet: false})
+      }))
+    } catch (err) {
+      console.log('Error', err)
+    }
+  }
+
+  handleDispute = (e,b) => {
+    try{
+      this.state.event[b].methods.disputeOutcome().send({from: this.state.account, value: 1000000000000000})
+      .once('receipt', ((receipt) => {
+        console.log('Dispute sent to KLEROS')
         this.setState({openBet: false})
       }))
     } catch (err) {
@@ -180,12 +191,18 @@ class App extends Component {
     const accounts = await web3.eth.getAccounts()
     this.setState({account: accounts[0]})
 
-    const factory = new web3.eth.Contract(FactoryContract.abi, '0x8d6BCB6aB8A24D07cF0838F919939434A878F11e')
+    const factory = new web3.eth.Contract(FactoryContract.abi, '0x32B54CEF0E66d30D5B099B3220a7265319e9442F')
     this.setState({factory})
     const numEvents = await factory.methods.getNumberOfMarkets().call()
     this.setState({numberOfEvents: numEvents})
-    const arbitrator = new web3.eth.Contract(ArbitratorContract.abi,'0x6E06EBb39Fdf15539d06227b51C96A31d4A249b4')
+    const arbitrator = new web3.eth.Contract(ArbitratorContract.abi,'0xd04293b15fE1031d8Bea6C48a807ACa36098bF8B')
     this.setState({arbitrator})
+
+    const numArbs = await arbitrator.methods.getNumberOfDisputes().call()
+    for(var k=0;k<numArbs;k++) {
+      var arb_data = await arbitrator.methods.getDisputeData(k).call()
+      this.addDisputeData(arb_data)
+    }
 
     for(var i=0;i<numEvents;i++) {
       var addr = await factory.methods.getMarket(i).call()
@@ -216,18 +233,15 @@ class App extends Component {
         .then((responseJSON) => {
           this.addEventData(ev._address,responseJSON.title, responseJSON.description, responseJSON.question, responseJSON.rulingOptions.descriptions,endTime,resultTime,outcome,price,balances,state)
           console.log('Finished loading: ',metaevidence);
-          console.log(i,numEvents)
           if(i>=(numEvents-1)) {
             console.log('loaded all data')
             this.setState({loading: false})
           }
         })
       })
-
-      var arb_data = await arbitrator.methods.getDisputeData(1).call()
-      this.addDisputeData(arb_data)
     }
   }
+
 
   listenForEvents = () => {
     /*if(this.state.loading == false) {
@@ -259,7 +273,7 @@ class App extends Component {
         <CreateMarket createMarket={this.handleCreateMarket} state={this.state}/>
       </Grid>
       <Grid item xs={4}>
-        <Bets handleOpenSetOutcome={this.handleOpenSetOutcome} handleCloseSetOutcome={this.handleCloseSetOutcome} handlePlaceBet={this.handlePlaceBet} handleChangePurchaseSize={this.handleChangePurchaseSize} state={this.state} openSetOutcome={this.state.openSetOutcome} open={this.state.openBet} handleClose={this.handleCloseBet} handleOpen={this.handleOpenBet}/>
+        <Bets handleDispute={this.handleDispute} handleSetOutcome = {this.handleSetOutcome} handleOpenSetOutcome={this.handleOpenSetOutcome} handleCloseSetOutcome={this.handleCloseSetOutcome} handlePlaceBet={this.handlePlaceBet} handleChangePurchaseSize={this.handleChangePurchaseSize} state={this.state} openSetOutcome={this.state.openSetOutcome} open={this.state.openBet} handleClose={this.handleCloseBet} handleOpen={this.handleOpenBet}/>
       </Grid>
       <Grid item xs={4}>
         <Arbitrator state={this.state}/>

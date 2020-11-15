@@ -45,19 +45,19 @@ class BetCard extends Component {
     }
   }
 
-  renderSetOutcome(resultTime) {
+  renderSetOutcome(resultTime,kid) {
     let timestamp = (Date.now())/1000
     if(timestamp > resultTime) {
-      return(<Button onClick={this.handleOpenSetOutcome}>Set Outcome (only GAMEMASTER)</Button>)
+      return(<ListItem button id={kid} label="Set Outcome" onClick={this.handleOpenSetOutcome} >Set outcome (Only GAMEMASTER)</ListItem>)
     } else {
       return ''
     }
   }
 
-  renderDisputeAnswer(resultTime) {
+  renderDisputeAnswer(resultTime,kid) {
     let timestamp = (Date.now())/1000
     if(timestamp > resultTime) {
-      return(<Button>Dispute Answer</Button>)
+      return(<ListItem button id={kid} onClick={this.handleDispute}>Dispute Answer</ListItem>)
     } else {
       return ''
     }
@@ -65,10 +65,14 @@ class BetCard extends Component {
 
   renderClaimReward(state) {
     if(state == 4) {
-      return(<Button>Claim reward</Button>)
+      return(<ListItem button>Claim reward</ListItem>)
     } else {
       return ''
     }
+  }
+
+  handleDispute = (e) => {
+    this.props.handleDispute(e,parseInt(e.target.id))
   }
 
   handleOpen = (e) => {
@@ -78,12 +82,11 @@ class BetCard extends Component {
   }
 
   handleOpenSetOutcome = (e) => {
-    this.props.handleOpenSetOutcome(e)
+    this.props.handleOpenSetOutcome(e,e.target.id)
   }
 
   render() {
     var eventData = this.props.state.eventData[this.props.id]
-    //this.setState({timestamp: (Date.now())/1000})
     return(
       <div>
       <Typography>{eventData.description}</Typography>
@@ -99,11 +102,12 @@ class BetCard extends Component {
       {this.renderOutcome(eventData.resultTime,eventData.outcome)}
       <Typography>Betting finishes: {returnFormattedTime(eventData.endTime)}</Typography>
       <Typography>Answer revealed: {returnFormattedTime(eventData.resultTime)}</Typography>
-      {this.renderSetOutcome(eventData.resultTime)}
-      {this.renderDisputeAnswer(eventData.resultTime)}
+      <List>
+      {this.renderSetOutcome(eventData.resultTime,this.props.id)}
+      {this.renderDisputeAnswer(eventData.resultTime,this.props.id)}
       {this.renderClaimReward(eventData.state)}
-      </div>
-    )
+      </List>
+    </div>)
   }
 }
 
@@ -114,6 +118,10 @@ class Bets extends Component {
 
   handleClose = (e) => {
     this.props.handleClose()
+  }
+
+  handleSetOutcome = (e) => {
+    this.props.handleSetOutcome(e,parseInt(e.target.id)+1)
   }
 
   render() {
@@ -136,8 +144,19 @@ class Bets extends Component {
         </form>
 
       </Dialog>
-      <Dialog open={this.props.openSetOutcome} onClose={this.props.handleCloseSetOutcome}>
+      <Dialog open={this.props.openSetOutcome} onClose={this.props.handleCloseSetOutcome} scroll='body'>
       <img style={{ width: "100%"}} src="set_outcome.png" alt= "set outcome"/>
+      <Typography>{this.props.state.eventData[this.props.state.openSetOutcomeBet].title}</Typography>
+      <Typography>{this.props.state.eventData[this.props.state.openSetOutcomeBet].description}</Typography>
+      <List>
+      {
+        this.props.state.eventData[this.props.state.openSetOutcomeBet].options.map((option,key) => {
+          return(
+            <ListItem button id={key} onClick={this.handleSetOutcome}>{option}</ListItem>
+          )
+        })
+      }
+      </List>
       </Dialog>
       <img style={{ width: "100%"}} src="active_markets.png" />
       <CardMedia style={{ height: "200px" }} image="/market2.jpg" />
@@ -147,7 +166,7 @@ class Bets extends Component {
           return(
             <Accordion>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}> {this.props.state.eventData[key].title} </AccordionSummary>
-              <AccordionDetails> <BetCard id={key} state={this.props.state} handleOpenSetOutcome={this.props.handleOpenSetOutcome} handleOpen={this.props.handleOpen} /> </AccordionDetails>
+              <AccordionDetails> <BetCard id={key} state={this.props.state} handleDispute={this.props.handleDispute} handleOpenSetOutcome={this.props.handleOpenSetOutcome} handleOpen={this.props.handleOpen} /> </AccordionDetails>
             </Accordion>
           )
         })
