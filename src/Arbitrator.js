@@ -69,7 +69,7 @@ class Arbitrator extends Component {
               <AccordionDetails> <DisputeCard id={key} state={this.props.state} handleDisputeOutcome={this.props.handleDisputeOutcome} /> </AccordionDetails>
             </Accordion>
           )
-          )}
+          }
           else {
             return(
               <Accordion>

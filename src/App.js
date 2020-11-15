@@ -250,12 +250,10 @@ class App extends Component {
           if(i>=(numEvents-1)) {
             console.log('loaded all data')
             this.setState({loading: false})
-
           }
         })
       })
     }
-    this.setState({loading: false})
   }
 
 
