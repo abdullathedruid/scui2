@@ -13,7 +13,6 @@ import EventContract from './SCEvent.json'
 import ArbitratorContract from './SimpleCentralizedArbitrator.json'
 import FactoryContract from './SCFactory.json'
 
-import BigNumber from "bignumber.js"
 import ipfsPublish from './ipfs-publish.js'
 const ipfs = require("nano-ipfs-store").at("https://ipfs.infura.io:5001");
 
@@ -42,7 +41,8 @@ class App extends Component {
       quotedPrice: 0,
       quotedAmount: 0,
       openSetOutcome: false,
-      openSetOutcomeBet: 0
+      openSetOutcomeBet: 0,
+      web3: null
     }
     this.addEventData = this.addEventData.bind(this)
   }
@@ -72,7 +72,7 @@ class App extends Component {
     if(e.target.value == 0) {
       this.setState({quotedPrice: 0})
     }
-    this.state.event[this.state.openBetBet].methods.price(this.state.openBetOption,new BigNumber(e.target.value*(2**64))).call().then((res) => {
+    this.state.event[this.state.openBetBet].methods.price(this.state.openBetOption,new this.state.web3.utils.BN(e.target.value*(2**64))).call().then((res) => {
       this.setState({quotedPrice: res/1000000})
     })
     this.setState({quotedAmount: e.target.value})
@@ -127,7 +127,7 @@ class App extends Component {
   handlePlaceBet = (e) => {
     console.log(`Attempting to buy ${this.state.quotedAmount} shares on option [${this.state.openBetOption}] on event: ${this.state.eventData[this.state.openBetBet].title} at address ${this.state.event[this.state.openBetBet]._address}`)
     try{
-      this.state.event[this.state.openBetBet].methods.buyshares(this.state.openBetOption,new BigNumber(this.state.quotedAmount*(2**64))).send({from: this.state.account})
+      this.state.event[this.state.openBetBet].methods.buyshares(this.state.openBetOption,new this.state.web3.utils.BN(this.state.quotedAmount*(2**64))).send({from: this.state.account})
       .once('receipt', ((receipt) => {
         console.log('Placed Bet!')
         this.setState({openBet: false})
@@ -202,6 +202,8 @@ class App extends Component {
     const accounts = await web3.eth.getAccounts()
     this.setState({account: accounts[0]})
 
+    this.setState({web3})
+
     const factory = new web3.eth.Contract(FactoryContract.abi, '0xCC484690bfeA257DD50f7a6865D0793d16Ac3E2A')
     this.setState({factory})
     const numEvents = await factory.methods.getNumberOfMarkets().call()
@@ -227,7 +229,7 @@ class App extends Component {
       var price = []
       var balances = []
       for (var j=0; j<numOptions; j++) {
-        price[j] = (await ev.methods.price(j+1,new BigNumber('18446744073709551616')).call()/1000000).toFixed(2)
+        price[j] = (await ev.methods.price(j+1,new web3.utils.BN('18446744073709551616')).call()/1000000).toFixed(2)
         balances[j] = (await ev.methods.getBalanceOf(j+1,this.state.account).call())/(2**64)
       }
 
