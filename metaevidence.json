@@ -1,0 +1,22 @@
+{
+  "category": "Sports",
+  "title": "Manchester City vs Liverpool",
+  "description": "8th November 2020, Premier League Match at Etihad Stadium",
+  "question": "Who will win?",
+  "rulingOptions": {
+    "type": "single-select",
+    "titles": [
+      "Manchester City",
+      "Draw",
+      "Liverpool"
+    ],
+    "descriptions": [
+      "Manchester City",
+      "Draw",
+      "Liverpool"
+    ]
+  },
+  "aliases": {
+    "0xHI": "Market Maker"
+  }
+}
