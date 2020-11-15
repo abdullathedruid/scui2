@@ -227,7 +227,7 @@ class App extends Component {
       var price = []
       var balances = []
       for (var j=0; j<numOptions; j++) {
-        price[j] = (await ev.methods.price(j+1,new BigNumber(18446744073709551616)).call()/1000000).toFixed(2)
+        price[j] = (await ev.methods.price(j+1,new BigNumber('18446744073709551616')).call()/1000000).toFixed(2)
         balances[j] = (await ev.methods.getBalanceOf(j+1,this.state.account).call())/(2**64)
       }
 
