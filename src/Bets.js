@@ -119,7 +119,13 @@ class Bets extends Component {
         <form>
           <TextField fullWidth label="How many shares to buy?" onChange={this.props.handleChangePurchaseSize}/>
           <TextField fullWidth label="Price" value={this.props.state.quotedPrice} />
-          <Button> Submit </Button>
+          <div style={{
+            margin: 'auto',
+          width: '50%',
+          padding: 10
+          }}>
+          <Button color="primary" variant="contained" onClick={this.props.handlePlaceBet}> Submit </Button>
+          </div>
         </form>
 
       </Dialog>
