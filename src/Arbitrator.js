@@ -32,7 +32,7 @@ class DisputeCard extends Component {
       <div>
       <Typography>{eventData.title}</Typography>
       <Typography>{eventData.description}</Typography>
-      <Typography> User claimed the outcome is [{eventData.options[eventData.outcome]}] whilst this has been disputed</Typography>
+      <Typography> User claimed the outcome is [{eventData.options[eventData.outcome-1]}] whilst this has been disputed</Typography>
       <Typography>{eventData.question}</Typography>
       <List>
       {eventData.options.map((description,key) => {
@@ -62,19 +62,19 @@ class Arbitrator extends Component {
       <div>
       {
         this.props.state.disputeData.map((dispute,key) => {
-          if(this.props.state.disputeData[3]<2) {
-          return(
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}> Dispute {key} </AccordionSummary>
-              <AccordionDetails> <DisputeCard id={key} state={this.props.state} handleDisputeOutcome={this.props.handleDisputeOutcome} /> </AccordionDetails>
-            </Accordion>
-          )
+          if(this.props.state.disputeData[key][3]==2) {
+            return(
+              <Accordion>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}> Dispute {key} </AccordionSummary>
+                <AccordionDetails> Dispute settled! </AccordionDetails>
+              </Accordion>
+            )
           }
           else {
             return(
               <Accordion>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}> Dispute {key} </AccordionSummary>
-                <AccordionDetails> Dispute settled! </AccordionDetails>
+                <AccordionDetails> <DisputeCard id={key} state={this.props.state} handleDisputeOutcome={this.props.handleDisputeOutcome} /> </AccordionDetails>
               </Accordion>
             )
           }
