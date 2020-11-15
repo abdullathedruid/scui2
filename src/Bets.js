@@ -48,7 +48,7 @@ class BetCard extends Component {
   renderSetOutcome(resultTime) {
     let timestamp = (Date.now())/1000
     if(timestamp > resultTime) {
-      return(<Button>Set Outcome (only GAMEMASTER)</Button>)
+      return(<Button onClick={this.handleOpenSetOutcome}>Set Outcome (only GAMEMASTER)</Button>)
     } else {
       return ''
     }
@@ -75,6 +75,10 @@ class BetCard extends Component {
     if(((Date.now())/1000) < this.props.state.eventData[this.props.id].endTime) {
       this.props.handleOpen(e,this.props.id,1+parseInt(e.target.id))
     }
+  }
+
+  handleOpenSetOutcome = (e) => {
+    this.props.handleOpenSetOutcome(e)
   }
 
   render() {
@@ -132,6 +136,9 @@ class Bets extends Component {
         </form>
 
       </Dialog>
+      <Dialog open={this.props.openSetOutcome} onClose={this.props.handleCloseSetOutcome}>
+        Set Outcome here
+      </Dialog>
       <img style={{ width: "100%"}} src="active_markets.png" />
       <CardMedia style={{ height: "200px" }} image="/market2.jpg" />
       <div>
@@ -140,7 +147,7 @@ class Bets extends Component {
           return(
             <Accordion>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}> {this.props.state.eventData[key].title} </AccordionSummary>
-              <AccordionDetails> <BetCard id={key} state={this.props.state} handleOpen={this.props.handleOpen} /> </AccordionDetails>
+              <AccordionDetails> <BetCard id={key} state={this.props.state} handleOpenSetOutcome={this.props.handleOpenSetOutcome} handleOpen={this.props.handleOpen} /> </AccordionDetails>
             </Accordion>
           )
         })

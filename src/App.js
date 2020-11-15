@@ -40,7 +40,8 @@ class App extends Component {
       openBetBet: 0,
       openBetOption: 1,
       quotedPrice: 0,
-      quotedAmount: 0
+      quotedAmount: 0,
+      openSetOutcome: false
     }
     this.addEventData = this.addEventData.bind(this)
   }
@@ -50,10 +51,20 @@ class App extends Component {
     this.setState({openBetBet: 0})
     this.setState({openBetOption: 1})
   }
+
   handleOpenBet = (e,b,o) => {
     this.setState({openBet: true})
     this.setState({openBetBet: b})
     this.setState({openBetOption: o})
+  }
+
+  handleCloseSetOutcome = (e) => {
+    this.setState({openSetOutcome: false})
+  }
+
+  handleOpenSetOutcome = (e) => {
+    this.setState({openSetOutcome: true})
+    console.log(this.state.openSetOutcome)
   }
 
   handleChangePurchaseSize = (e,bet) => {
@@ -200,9 +211,6 @@ class App extends Component {
 
       var arb_data = await arbitrator.methods.getDisputeData(1).call()
       this.addDisputeData(arb_data)
-
-
-
     }
   }
 
@@ -236,7 +244,7 @@ class App extends Component {
         <CreateMarket createMarket={this.handleCreateMarket} state={this.state}/>
       </Grid>
       <Grid item xs={4}>
-        <Bets handlePlaceBet={this.handlePlaceBet} handleChangePurchaseSize={this.handleChangePurchaseSize} state={this.state} open={this.state.openBet} handleClose={this.handleCloseBet} handleOpen={this.handleOpenBet}/>
+        <Bets handleOpenSetOutcome={this.handleOpenSetOutcome} handleCloseSetOutcome={this.handleCloseSetOutcome} handlePlaceBet={this.handlePlaceBet} handleChangePurchaseSize={this.handleChangePurchaseSize} state={this.state} openSetOutcome={this.state.openSetOutcome} open={this.state.openBet} handleClose={this.handleCloseBet} handleOpen={this.handleOpenBet}/>
       </Grid>
       <Grid item xs={4}>
         <Arbitrator state={this.state}/>
