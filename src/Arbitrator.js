@@ -25,7 +25,6 @@ class DisputeCard extends Component {
       if(ev.address == disputeData[0]) {
         eventData = ev
       } else {
-        eventData = []
       }
     })
     return(
